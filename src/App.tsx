@@ -1,12 +1,13 @@
+import Body from "./components/body"
 
 
 function App() {
 
 
   return (
-<div className='text-2xl text-amber-300'>
+<div>
 
-  this is namaste gpt
+ <Body/>
 
 </div>
   )
