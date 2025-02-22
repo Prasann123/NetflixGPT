@@ -2,7 +2,7 @@ import React from "react";
 
 const header = () => {
   return (
-    <div className="absolute z-20 px-8 py-5 bg-gradient-to-b from-black">
+    <div className="absolute z-20 px-8 py-5 ">
 
       <img
       className="w-44"
