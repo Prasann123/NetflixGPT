@@ -1,13 +1,37 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import Header from "./header";
-
+import { IvalidationResult, validateCredentials } from "../utils/validate";
 const Login: React.FC = () => {
+  const [isSignUPClicked, setIsSignUPClicked] = useState(true);
+  const [validationResult, setValidationResult] = useState<IvalidationResult>({
+    isError: false,
+    message: {
+      emailMessage: "",
+      passwordMessage: "",
+      fullNameMessage: "",
+    },
+  });
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const fullNameRef = useRef<HTMLInputElement>(null);
 
-    const [isSignUPClicked, setIsSignUPClicked] = React.useState(true);
+  const handleSignINClick = () => {
+    const email = emailRef.current?.value || "";
+    const password = passwordRef.current?.value || "";
+    const fullName = fullNameRef.current?.value || "";
 
-    const handleSignup = () => {
-        setIsSignUPClicked(!isSignUPClicked);
-    }
+    const validationResults = validateCredentials({
+      email,
+      password,
+      fullName,
+    });
+    setValidationResult(validationResults);  
+}
+
+  const handleSignup = () => {
+    setIsSignUPClicked(!isSignUPClicked);
+
+  };
   return (
     <div>
       <Header />
@@ -28,37 +52,55 @@ const Login: React.FC = () => {
           </header>
 
           <div className="flex flex-col items-center">
-         { !isSignUPClicked &&<input
-              type="text"
-              placeholder="First Name"
-              style={{ width: "362px" }}
-              className="border-white-500 bg-black-800 placeholder-white-500 m-5 h-14 rounded border p-1 text-white placeholder:p-2"
-            />}
+            {!isSignUPClicked && (
+              <>
+                <input
+                  type="text"
+                  ref={fullNameRef}
+                  placeholder="Full Name"
+                  style={{ width: "362px" }}
+                  className="border-white-500 bg-black-800 placeholder-white-500 m-5 h-14 rounded border p-1 text-white placeholder:p-2"
+                />
+                <p className="mr-55 text-sm text-red-500">
+                  {validationResult.message.fullNameMessage}
+                </p>
+              </>
+            )}
             <input
               type="text"
               placeholder="Email or mobile number"
+              ref={emailRef}
               style={{ width: "362px" }}
               className="border-white-500 bg-black-800 placeholder-white-500 m-5 h-14 rounded border p-1 text-white placeholder:p-2"
             />
+            <p className="mr-38 text-sm text-red-500">
+              {validationResult.message.emailMessage}
+            </p>
             <input
               type="password"
               placeholder="Password"
+              ref={passwordRef}
               style={{ width: "362px" }}
-              className="border-white-500 bg-black-800 placeholder-white-500 m-5 h-14  rounded border p-1 text-white placeholder:p-2"
+              className="border-white-500 bg-black-800 placeholder-white-500 m-5 h-14 rounded border p-1 text-white placeholder:p-2"
             />
+            <p className="mr-45 text-sm text-red-500">
+              {validationResult.message.passwordMessage}
+            </p>
             <button
+              onSubmit={(e) => e.preventDefault()}
               style={{ width: "362px" }}
+            onClick={handleSignINClick}
               className="m-4 flex h-10 w-2xs items-center justify-center rounded bg-red-600 p-4 font-bold text-white"
             >
-               {!isSignUPClicked ?"Sign up":"Sign in"} 
+              {!isSignUPClicked ? "Sign up" : "Sign in"}
             </button>
-            <h1 className="text-1xl text-white">OR</h1>
-            <button
+    {/*         <h1 className="text-1xl text-white">OR</h1> */}
+        {/*     <button
               style={{ width: "362px" }}
               className="m-4 flex h-10 w-2xs items-center justify-center rounded bg-gray-700 p-4 font-bold text-white"
             >
               Use a sign-In Code
-            </button>
+            </button> */}
             <a href="#" className="text-white underline">
               Forgot Password?
             </a>
@@ -68,9 +110,13 @@ const Login: React.FC = () => {
             <label className="text-white">Remember me</label>
           </div>
           <p className="mt-5 ml-14 text-white">
-           {!isSignUPClicked ? "Already Registered":"New to Netflix?"}
-            <a href="#" onClick={handleSignup} className="!important font-bold hover:underline">
-             {!isSignUPClicked ?"Sign in Now":"Sign up now"} 
+            {!isSignUPClicked ? "Already Registered" : "New to Netflix?"}
+            <a
+              href="#"
+              onClick={handleSignup}
+              className="!important font-bold hover:underline"
+            >
+              {!isSignUPClicked ? "Sign in Now" : "Sign up now"}
             </a>
           </p>
         </form>
