@@ -2,6 +2,7 @@ interface IValidateCredentials {
   email: string;
   password: string;
   fullName?: string;
+  isSignUPClicked?: boolean;
 }
 
 interface IValidationMessage {
@@ -27,7 +28,7 @@ export const validateCredentials = (
   const isPasswordValid = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/gm.test(
     validateCreds.password,
   );
-  if (!validateCreds.fullName) {
+  if (!validateCreds.fullName && !validateCreds.isSignUPClicked) {
     fullNameMessage = "Full name is required.";
     isError = true;
   }

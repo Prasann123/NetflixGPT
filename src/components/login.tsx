@@ -1,6 +1,11 @@
 import React, { useState, useRef } from "react";
 import Header from "./header";
 import { IvalidationResult, validateCredentials } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
 const Login: React.FC = () => {
   const [isSignUPClicked, setIsSignUPClicked] = useState(true);
   const [validationResult, setValidationResult] = useState<IvalidationResult>({
@@ -24,13 +29,50 @@ const Login: React.FC = () => {
       email,
       password,
       fullName,
+      isSignUPClicked
     });
-    setValidationResult(validationResults);  
-}
+    console.log(isSignUPClicked);
+    if (!isSignUPClicked) {
+      if (!validationResults.isError) {
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            // Signed up
+            const user = userCredential.user;
+            console.log(user);
+            // ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+
+            // ..
+          });
+      }
+    } else {
+      console.log(validationResult.message)
+      if (!validationResults.isError) {
+        console.log("sign in");
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            console.log(user);
+            // ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+          });
+      }
+    }
+
+    setValidationResult(validationResults);
+  };
 
   const handleSignup = () => {
     setIsSignUPClicked(!isSignUPClicked);
-
   };
   return (
     <div>
@@ -89,13 +131,13 @@ const Login: React.FC = () => {
             <button
               onSubmit={(e) => e.preventDefault()}
               style={{ width: "362px" }}
-            onClick={handleSignINClick}
+              onClick={handleSignINClick}
               className="m-4 flex h-10 w-2xs items-center justify-center rounded bg-red-600 p-4 font-bold text-white"
             >
               {!isSignUPClicked ? "Sign up" : "Sign in"}
             </button>
-    {/*         <h1 className="text-1xl text-white">OR</h1> */}
-        {/*     <button
+            {/*         <h1 className="text-1xl text-white">OR</h1> */}
+            {/*     <button
               style={{ width: "362px" }}
               className="m-4 flex h-10 w-2xs items-center justify-center rounded bg-gray-700 p-4 font-bold text-white"
             >
